@@ -1,1 +1,58 @@
-ÿþ
+version: '3'
+services:
+
+  # ============================================================
+  # Cowrie SSH/Telnet Honeypot
+  # Ports: 22 (SSH), 23 (Telnet)
+  # Logs: ./logs/cowrie.json (one JSON event per line)
+  # Note: Volume mount path is /cowrie/cowrie-git/var/log/cowrie
+  #       (not the commonly documented /cowrie/var/log/cowrie)
+  # Running as: UID 999 (cowrie user, non-root)
+  # ============================================================
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: cowrie
+    restart: unless-stopped
+    ports:
+      - "22:2222"
+      - "23:2223"
+    volumes:
+      - ./logs:/cowrie/cowrie-git/var/log/cowrie
+      - ./dl:/cowrie/var/lib/cowrie/downloads
+    environment:
+      - COWRIE_TELNET_ENABLED=yes
+
+  # ============================================================
+  # nginx HTTP/HTTPS Honeypot
+  # Ports: 80 (HTTP), 443 (HTTPS)
+  # Logs: ./nginx-logs/access.log, ./nginx-logs/error.log
+  # Config: Default nginx (intentional â€” maximizes probe variety)
+  # ============================================================
+  nginx-honeypot:
+    image: nginx:alpine
+    container_name: nginx-honeypot
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-logs:/var/log/nginx
+
+  # ============================================================
+  # Dionaea Malware/Exploit Honeypot
+  # Ports: 21 (FTP), 445 (SMB), 1433 (MSSQL), 3306 (MySQL)
+  # Logs: ./dionaea-logs/dionaea.log
+  # Captures: ./dionaea-malware/ (binary malware samples)
+  # ============================================================
+  dionaea:
+    image: dinotools/dionaea
+    container_name: dionaea
+    restart: unless-stopped
+    ports:
+      - "21:21"
+      - "445:445"
+      - "1433:1433"
+      - "3306:3306"
+    volumes:
+      - ./dionaea-logs:/opt/dionaea/var/log/dionaea
+      - ./dionaea-malware:/opt/dionaea/var/lib/dionaea/binaries
