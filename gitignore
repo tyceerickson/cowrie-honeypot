@@ -1,0 +1,49 @@
+# Sensitive data — never commit
+*.mmdb
+*.key
+wireguard-vps.conf
+config/wireguard-vps.conf
+
+# Large log files — use data/sample/ instead
+data/daily/*.json
+data/daily/*.log
+/opt/cowrie-logs/
+
+# GeoIP databases
+*.tar.gz
+GeoLite2-*/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Credentials
+.env
+*.env
+secrets.yaml
+credentials.json
+
+# Compiled outputs
+*.pyc
