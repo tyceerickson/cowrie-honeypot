@@ -11,12 +11,10 @@ Python scripts for analyzing Cowrie honeypot session data and generating the att
 Reads GeoIP-enriched Cowrie JSON logs and produces a full attack intelligence report: credential analysis, geographic breakdown, HASSH tool fingerprinting, command analysis, session statistics, and attack velocity charts.
 
 ```bash
-# UBUNTU SERVER or ALIENWARE
-# Reads from Ubuntu Server, outputs to local results/
-
-python3 analyze_sessions.py \
+# UBUNTU SERVER
+python3 /opt/cowrie-tools/analyze_sessions.py \
   --input /opt/cowrie-logs/cowrie_enriched.json \
-  --output-dir ../results \
+  --output-dir /opt/cowrie-tools/results \
   --top 25
 
 # Skip charts if matplotlib not installed
@@ -67,22 +65,24 @@ Credential pairs:      428
 
 Feeds Cowrie session transcripts to a local Ollama LLM and generates plain-English explanations of attacker behavior. Runs on Alienware (where Ollama is installed). Mirrors the format of Project 2's `explain.py` (ai-traffic-classifier).
 
-```bash
-# ALIENWARE — requires Ollama with llama3.1:8b
-ollama pull llama3.1:8b  # if not already pulled
+```powershell
+# ALIENWARE (PowerShell) — requires Ollama with llama3.1:8b
+# ollama pull llama3.1:8b  (if not already pulled)
 
-python analyze_sessions.py \
-  --input C:\path\to\cowrie_enriched.json \
-  --nginx-input C:\path\to\nginx_access.log \
-  --output-dir results \
-  --sessions 2 \
+cd C:\Users\tycee\cowrie-honeypot-git
+
+python analysis\explain_sessions.py `
+  --input data\live\cowrie_enriched.json `
+  --nginx-input data\live\nginx_access.log `
+  --output-dir results `
+  --sessions 2 `
   --categories implant,recon,cryptominer
 
 # All categories
-python analyze_sessions.py --categories all
+python analysis\explain_sessions.py --categories all
 ```
 
-**Input:** `cowrie_enriched.json` (copy from Ubuntu Server)  
+**Input:** `data\live\cowrie_enriched.json` (synced from Ubuntu Server — see pipeline below)  
 **Output:** `results/session-explanations.md`  
 **Model:** `llama3.1:8b` (local, Alienware RTX 4070)  
 **Ollama URL:** `http://localhost:11434/api/generate`
@@ -117,15 +117,21 @@ The LLM correctly identified:
 
 After capture ends May 28, 2026:
 
-**Step 1 — Pull final enriched data to Alienware:**
+### Step 1 — Sync live data into the project
 
 ```powershell
-# ALIENWARE (PowerShell)
-scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json C:\Users\tycee\Downloads\cowrie_enriched.json
-scp terickson@100.82.166.75:/opt/cowrie-logs/nginx/access.log C:\Users\tycee\Downloads\nginx_access.log
+# ALIENWARE (PowerShell) — from project root
+cd C:\Users\tycee\cowrie-honeypot-git
+
+# Pull enriched log and nginx log into data\live\
+scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json data\live\cowrie_enriched.json
+scp terickson@100.82.166.75:/opt/cowrie-logs/nginx/access.log data\live\nginx_access.log
 ```
 
-**Step 2 — Run main analysis:**
+> `data\live\` is in `.gitignore` — files land here but are never committed.
+> See `data/README.md` for the full data directory structure.
+
+### Step 2 — Run main analysis on Ubuntu Server
 
 ```bash
 # UBUNTU SERVER
@@ -135,26 +141,32 @@ python3 /opt/cowrie-tools/analyze_sessions.py \
   --top 25
 ```
 
-**Step 3 — Run LLM explainer:**
+### Step 3 — Run LLM explainer on Alienware
 
 ```powershell
-# ALIENWARE
+# ALIENWARE (PowerShell) — from project root
+cd C:\Users\tycee\cowrie-honeypot-git
+
 python analysis\explain_sessions.py `
-  --input C:\Users\tycee\Downloads\cowrie_enriched.json `
-  --nginx-input C:\Users\tycee\Downloads\nginx_access.log `
+  --input data\live\cowrie_enriched.json `
+  --nginx-input data\live\nginx_access.log `
   --output-dir results `
   --sessions 3 `
   --categories all
 ```
 
-**Step 4 — Pull results back and commit:**
+### Step 4 — Pull analysis results and commit
 
 ```powershell
-# ALIENWARE
-scp -r terickson@100.82.166.75:/opt/cowrie-tools/results/ C:\Users\tycee\cowrie-honeypot-git\results\
+# ALIENWARE (PowerShell) — from project root
 cd C:\Users\tycee\cowrie-honeypot-git
-git add .
-git commit -m "M4: final analysis — 7-day capture results"
+
+# Pull charts and CSVs from Ubuntu Server
+scp -r terickson@100.82.166.75:/opt/cowrie-tools/results/ results\
+
+# Commit everything
+git add results\
+git commit -m "M4: final analysis — 7-day capture complete"
 git push origin main
 ```
 

@@ -1,6 +1,6 @@
 # Data
 
-Sample data and documentation for the Cowrie honeypot capture dataset.
+Sample data, live data landing zone, and documentation for the Cowrie honeypot capture dataset.
 
 ---
 
@@ -8,16 +8,46 @@ Sample data and documentation for the Cowrie honeypot capture dataset.
 
 ```
 data/
-├── README.md              — This file
+├── README.md                        — This file
+├── live/                            — Live capture data (gitignored, not committed)
+│   ├── cowrie_enriched.json         — Synced from Ubuntu Server for local analysis
+│   ├── nginx_access.log             — Synced nginx web attack log
+│   └── .gitkeep                     — Keeps directory tracked by git
 └── sample/
     └── cowrie-sample-10events.json  — 10 sanitized real events (one per type)
 ```
 
 ---
 
-## Sample Data
+## `data/live/` — Live Data Landing Zone
 
-`sample/cowrie-sample-10events.json` contains 10 representative events from the live capture, sanitized for public distribution. One event per Cowrie event type, plus an additional SSH key implant command.
+This directory is the local working copy of the live capture data synced from Ubuntu Server. It is listed in `.gitignore` so the actual log files are never committed — they are too large (~500MB) and contain real attacker IP addresses.
+
+**Sync from Ubuntu Server (run after capture ends May 28):**
+
+```powershell
+# ALIENWARE (PowerShell) — from project root
+cd C:\Users\tycee\cowrie-honeypot-git
+
+scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json data\live\cowrie_enriched.json
+scp terickson@100.82.166.75:/opt/cowrie-logs/nginx/access.log data\live\nginx_access.log
+scp terickson@100.82.166.75:/opt/cowrie-logs/dionaea/dionaea.log data\live\dionaea.log
+```
+
+Once synced, run analysis scripts pointing to `data\live\`:
+
+```powershell
+python analysis\explain_sessions.py `
+  --input data\live\cowrie_enriched.json `
+  --nginx-input data\live\nginx_access.log `
+  --output-dir results
+```
+
+---
+
+## `data/sample/` — Sanitized Sample Data
+
+`sample/cowrie-sample-10events.json` contains 10 representative events from the live capture, sanitized for public distribution. One event per Cowrie event type, plus an SSH key implant command.
 
 **Sanitization applied:**
 - Source IPs replaced with `198.51.100.x` (RFC 5737 documentation range)
@@ -36,35 +66,15 @@ data/
 | `cowrie.session.closed` | Session termination with duration |
 | `cowrie.command.input` | SSH key implant command (bonus event) |
 
-**Sample event (cowrie.login.success):**
-```json
-{
-  "eventid": "cowrie.login.success",
-  "username": "root",
-  "password": "RASYAXINSA8VCPU32GBAMD",
-  "message": "login attempt [root/RASYAXINSA8VCPU32GBAMD] succeeded",
-  "src_ip": "198.51.100.x",
-  "session": "283dc4b9f598",
-  "protocol": "ssh",
-  "src_country": "Bulgaria",
-  "src_country_code": "BG",
-  "src_city": "Unknown",
-  "src_asn": "AS214209",
-  "src_org": "Internet Magnate (Pty) Ltd",
-  "timestamp": "2026-05-22T00:00:55.886990Z"
-}
-```
-
 ---
 
 ## Full Dataset
 
-The complete 7-day capture dataset is not committed to this repository — it contains ~500MB of raw JSON with real attacker IP addresses and is too large for GitHub.
+The complete 7-day capture dataset lives on Ubuntu Server (`192.168.10.4`).
+It is not committed to this repository — use `data/live/` as the local working copy.
 
-**Dataset location:** Ubuntu Server `192.168.10.4`
-
-| File | Location | Contents |
-|------|----------|---------|
+| File | Location on Ubuntu Server | Contents |
+|------|--------------------------|---------|
 | Raw Cowrie events | `/opt/cowrie-logs/cowrie.json` | All events, append-only |
 | GeoIP enriched | `/opt/cowrie-logs/cowrie_enriched.json` | With country/ASN fields |
 | nginx logs | `/opt/cowrie-logs/nginx/access.log` | Web attack requests |
@@ -75,7 +85,7 @@ The complete 7-day capture dataset is not committed to this repository — it co
 
 ## Cowrie JSON Schema
 
-Every Cowrie event follows this base schema, with additional fields depending on event type:
+Every Cowrie event follows this base schema:
 
 ### Base Fields (all events)
 
@@ -98,22 +108,6 @@ Every Cowrie event follows this base schema, with additional fields depending on
 | `src_city` | string | `"Central"` |
 | `src_asn` | string | `"AS45102"` |
 | `src_org` | string | `"Alibaba (US) Technology Co."` |
-
-### Event-Specific Fields
-
-**`cowrie.login.failed` / `cowrie.login.success`**
-- `username` — attempted username
-- `password` — attempted password
-
-**`cowrie.command.input`**
-- `input` — exact command typed by attacker
-
-**`cowrie.client.kex`**
-- `hassh` — MD5 fingerprint of SSH client capabilities
-- `hasshAlgorithms` — full algorithm string used to compute HASSH
-
-**`cowrie.session.closed`**
-- `duration` — session length in seconds
 
 ---
 

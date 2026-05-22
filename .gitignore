@@ -4,9 +4,15 @@
 wireguard-vps.conf
 config/wireguard-vps.conf
 
+# Live capture data — too large for GitHub, contains real attacker IPs
+# Sync to data/live/ locally using scp from Ubuntu Server
+data/live/*.json
+data/live/*.log
+data/live/*.csv
+# Keep the directory itself tracked
+!data/live/.gitkeep
+
 # Large log files — use data/sample/ instead
-data/daily/*.json
-data/daily/*.log
 /opt/cowrie-logs/
 
 # GeoIP databases
