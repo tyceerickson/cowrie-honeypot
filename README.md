@@ -161,6 +161,6 @@ The Cowrie session logs, Dionaea malware captures, and nginx web attack logs pro
 
 ## Certifications & Background
 
-- **CompTIA Security+**, **Network+**, **ISC2 CC**, **Microsoft AI-900**
+- **CompTIA Security+**, **Network+**, **ISC2 CC**
 - BS in Management Information Systems — Weber State University (3.69 GPA, April 2026)
 - Entering **Carnegie Mellon University MSISPM** — Fall 2026
