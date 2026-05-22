@@ -202,7 +202,7 @@ INTERNET
 
 **Why a VPS instead of home lab exposure:** The VPS absorbs all internet attack traffic. The home network IP never appears in any attacker logs. If the honeypot were compromised, the blast radius is limited to the VPS — the home lab is completely isolated.
 
-**Why WireGuard instead of SSH tunnel:** WireGuard is stateless, survives network interruptions, and is natively supported by OPNsense. The VPS initiates the connection outbound, which means the double-NAT behind the Eero router is irrelevant — no port forwarding required on the home network.
+**Why WireGuard instead of SSH tunnel:** WireGuard is stateless, survives network interruptions, and is natively supported by OPNsense. The VPS initiates the connection outbound, which means the double-NAT behind the Eero router is irrelevant, no port forwarding required on the home network.
 
 **Why OPNsense initiates vs VPS initiates:** The home WAN IP (192.168.4.58) is behind Eero NAT and not directly routable from the internet. The VPS dials out to OPNsense's real public IP (206.174.162.81), not the other way around.
 
