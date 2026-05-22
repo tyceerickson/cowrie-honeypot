@@ -39,7 +39,7 @@ Fields added to each event:
 
 ### `hassh_identify.py` — HASSH Tool Fingerprinting
 
-Identifies SSH client tools from HASSH fingerprints using algorithm string pattern matching and a persistent local cache. No external database required — works on any unknown hash automatically.
+Identifies SSH client tools from HASSH fingerprints using algorithm string pattern matching and a persistent local cache. No external database required, works on any unknown hash automatically.
 
 ```bash
 # UBUNTU SERVER — show current cache
@@ -66,7 +66,7 @@ Pattern rules:
 - No curve25519, only CBC ciphers → Dropbear/IoT
 - Starts with `ecdh-sha2-nistp256`, no curve25519 → libssh
 
-**First-hour capture results (May 2026):**
+**Day 1 capture results (May 2026):**
 
 | HASSH | Sessions | Tool |
 |-------|---------|------|
