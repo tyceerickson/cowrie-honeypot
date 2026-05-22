@@ -100,9 +100,9 @@ The WireGuard interface is assigned as `HoneypotOPT6` (opt6) in OPNsense.
 | Destination | `192.168.10.0/24` |
 | Description | `Allow VPS honeypot to reach VLAN 10 for log forwarding` |
 
-**Policy rationale:** This rule permits one specific traffic flow: the VPS (10.10.10.0/30) sending rsync/SSH log forwarding traffic to Ubuntu Server (192.168.10.0/24). It does not permit the VPS to reach any other VLAN (20/30/40), any management interfaces, or the OPNsense GUI. The scope is deliberately narrow — only the log forwarding destination is reachable.
+**Policy rationale:** This rule permits one specific traffic flow: the VPS (10.10.10.0/30) sending rsync/SSH log forwarding traffic to Ubuntu Server (192.168.10.0/24). It does not permit the VPS to reach any other VLAN (20/30/40), any management interfaces, or the OPNsense GUI. The scope is deliberately narrow, only the log forwarding destination is reachable.
 
-**Why this is safe:** The VPS is a hardened container host. The only services running are Cowrie (UID 999, outbound blocked by iptables), nginx, Dionaea, and WireGuard. The WireGuard tunnel authenticates by public key — no other device on the internet can inject traffic through this rule by spoofing the VPS address.
+**Why this is safe:** The VPS is a hardened container host. The only services running are Cowrie (UID 999, outbound blocked by iptables), nginx, Dionaea, and WireGuard. The WireGuard tunnel authenticates by public key, no other device on the internet can inject traffic through this rule by spoofing the VPS address.
 
 ---
 
@@ -122,7 +122,7 @@ Ubuntu Server has two network interfaces:
 | `10.10.10.0/30` | `192.168.10.1` | enp0s2 | Return path for WireGuard tunnel replies |
 | `192.168.0.0/16` | `192.168.10.1` | enp0s2 | All VLAN routing via OPNsense |
 
-**Why the 10.10.10.0/30 route is required:** Without this route, Ubuntu Server sends reply packets to the VPS (10.10.10.2) via the default gateway (enp0s1 → 192.168.64.1), which has no route to the WireGuard subnet. The VPS sends SYN packets through the tunnel, OPNsense forwards them to Ubuntu Server via enp0s2, but Ubuntu Server replies via enp0s1 — causing asymmetric routing that prevents the TCP handshake from completing. This static route corrects the return path.
+**Why the 10.10.10.0/30 route is required:** Without this route, Ubuntu Server sends reply packets to the VPS (10.10.10.2) via the default gateway (enp0s1 → 192.168.64.1), which has no route to the WireGuard subnet. The VPS sends SYN packets through the tunnel, OPNsense forwards them to Ubuntu Server via enp0s2, but Ubuntu Server replies via enp0s1, causing asymmetric routing that prevents the TCP handshake from completing. This static route corrects the return path.
 
 ### Netplan Configuration (`/etc/netplan/50-cloud-init.yaml`)
 
@@ -164,7 +164,7 @@ AllowedIPs = 10.10.10.1/32, 192.168.10.0/24
 PersistentKeepalive = 25
 ```
 
-**AllowedIPs explanation:** `10.10.10.1/32` routes tunnel keepalive and control traffic to OPNsense's tunnel IP. `192.168.10.0/24` routes log forwarding traffic to the entire VLAN 10 subnet — specifically Ubuntu Server at 192.168.10.4. Any traffic the VPS sends destined for 192.168.10.x is automatically sent through the encrypted WireGuard tunnel.
+**AllowedIPs explanation:** `10.10.10.1/32` routes tunnel keepalive and control traffic to OPNsense's tunnel IP. `192.168.10.0/24` routes log forwarding traffic to the entire VLAN 10 subnet, specifically Ubuntu Server at 192.168.10.4. Any traffic the VPS sends destined for 192.168.10.x is automatically sent through the encrypted WireGuard tunnel.
 
 ---
 
