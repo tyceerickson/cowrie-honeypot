@@ -14,7 +14,7 @@ This document explains the rationale behind every major security decision made i
 
 The VPS absorbs all internet-facing risk. The home network IP never appears anywhere in the collected data. If the VPS is fully compromised, destroying it costs $6 and 30 minutes to rebuild. The home lab is completely unaffected.
 
-**Tradeoff acknowledged:** This adds WireGuard complexity and a small monthly cost. The complexity is justified by the security isolation and the professional architecture it creates for the portfolio.
+**Tradeoff acknowledged:** This adds WireGuard complexity and a small monthly cost. The complexity is justified by the security isolation and provides more hands on experience.
 
 **Failure mode:** If the VPS is compromised and an attacker pivots through the WireGuard tunnel into VLAN 10, they would reach Ubuntu Server. Mitigation: VLAN 10 firewall rules limit what Ubuntu Server can reach; the WireGuard OPT6 rule only permits traffic to `192.168.10.0/24`, not to any other VLAN.
 
