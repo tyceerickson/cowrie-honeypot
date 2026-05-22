@@ -1,0 +1,54 @@
+<!-- ============================================================
+     Wazuh Agent Configuration for Cowrie Honeypot
+     Add this block to: /var/ossec/etc/ossec.conf
+     on Ubuntu Server (192.168.10.4) after Wazuh agent install
+
+     Project 4 integration — cowrie-honeypot → wazuh-soc-pipeline
+     ============================================================ -->
+
+<ossec_config>
+
+  <!-- Wazuh Manager Connection -->
+  <client>
+    <server>
+      <address>192.168.10.x</address>
+      <port>1514</port>
+      <protocol>tcp</protocol>
+    </server>
+    <config-profile>ubuntu, ubuntu24</config-profile>
+    <notify_time>10</notify_time>
+    <time-reconnect>60</time-reconnect>
+    <auto_restart>yes</auto_restart>
+  </client>
+
+  <!-- Cowrie SSH/Telnet Honeypot Logs (GeoIP-enriched) -->
+  <!-- Primary ingestion source — normalized by export_to_wazuh.py -->
+  <localfile>
+    <log_format>json</log_format>
+    <location>/opt/cowrie-logs/wazuh/wazuh-cowrie.json</location>
+    <label key="honeypot">cowrie</label>
+    <label key="sensor">digitalocean-nyc1</label>
+  </localfile>
+
+  <!-- Raw Cowrie logs (backup — direct from rsync) -->
+  <localfile>
+    <log_format>json</log_format>
+    <location>/opt/cowrie-logs/cowrie.json</location>
+    <label key="honeypot">cowrie-raw</label>
+  </localfile>
+
+  <!-- nginx Web Honeypot Logs -->
+  <localfile>
+    <log_format>apache</log_format>
+    <location>/opt/cowrie-logs/nginx/access.log</location>
+    <label key="honeypot">nginx-web</label>
+  </localfile>
+
+  <!-- Dionaea Malware Capture Logs -->
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/opt/cowrie-logs/dionaea/dionaea.log</location>
+    <label key="honeypot">dionaea</label>
+  </localfile>
+
+</ossec_config>
