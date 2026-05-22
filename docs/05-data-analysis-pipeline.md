@@ -362,3 +362,64 @@ Logrotate configured on VPS (`/etc/logrotate.d/cowrie`):
 ```
 
 `copytruncate` is used instead of `create` to avoid interrupting the running Docker container's file handle.
+
+---
+
+## Status Check During Data Gathering
+
+Run this cmd in the homeserver to get an snapshot on the data that has been currently collected
+
+```bash
+# How many events total
+wc -l /opt/cowrie-logs/cowrie.json
+
+# How many countries so far
+cat /opt/cowrie-logs/cowrie_enriched.json | python3 -c "
+import sys, json
+from collections import Counter
+countries = Counter()
+for line in sys.stdin:
+    try:
+        e = json.loads(line)
+        if e.get('src_country') and e['src_country'] != 'Unknown':
+            countries[e['src_country']] += 1
+    except: pass
+for country, count in countries.most_common(15):
+    print(f'{count:>8} {country}')
+"
+
+# What credentials attackers are trying
+cat /opt/cowrie-logs/cowrie.json | python3 -c "
+import sys, json
+from collections import Counter
+passwords = Counter()
+for line in sys.stdin:
+    try:
+        e = json.loads(line)
+        if e.get('eventid') == 'cowrie.login.failed':
+            passwords[e.get('password','')] += 1
+    except: pass
+print('Top 20 passwords attempted:')
+for pw, count in passwords.most_common(20):
+    print(f'{count:>8} {pw}')
+"
+
+# What commands attackers ran after login
+cat /opt/cowrie-logs/cowrie.json | python3 -c "
+import sys, json
+from collections import Counter
+cmds = Counter()
+for line in sys.stdin:
+    try:
+        e = json.loads(line)
+        if e.get('eventid') == 'cowrie.command.input':
+            cmds[e.get('input','')] += 1
+    except: pass
+print('Top 20 commands run in fake shell:')
+for cmd, count in cmds.most_common(20):
+    print(f'{count:>8} {cmd}')
+"
+
+# Check nginx web attacks
+wc -l /opt/cowrie-logs/nginx/access.log
+tail -20 /opt/cowrie-logs/nginx/access.log
