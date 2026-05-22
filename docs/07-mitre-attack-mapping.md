@@ -14,7 +14,7 @@ This document maps observed attacker behaviors captured by the honeypot to the [
 - The exact Cowrie/nginx/Dionaea log field that evidences it
 - Detection opportunity — what a Wazuh rule should alert on
 
-The honeypot captures behaviors across three ATT&CK tactics: **Reconnaissance**, **Initial Access**, and **Execution**. This is expected — a honeypot by definition captures only the earliest phases of an attack chain (the attacker never reaches the real environment).
+The honeypot captures behaviors across three ATT&CK tactics: **Reconnaissance**, **Initial Access**, and **Execution**. This is expected, a honeypot by definition captures only the earliest phases of an attack chain (the attacker never reaches the real environment).
 
 ---
 
