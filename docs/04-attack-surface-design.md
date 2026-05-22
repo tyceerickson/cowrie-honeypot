@@ -23,9 +23,9 @@ The combination of SSH behavioral data, web attack signatures, and malware binar
 
 ### Why SSH and Telnet
 
-SSH (port 22) is the most heavily scanned port on the internet. Every public IP receives SSH credential brute force attempts within hours — sometimes within minutes — of exposure. This makes it the highest-density source of real attack data available without any special configuration.
+SSH (port 22) is the most heavily scanned port on the internet. Every public IP receives SSH credential brute force attempts within hours, sometimes within minutes, of exposure. This makes it the highest-density source of real attack data available without any special configuration.
 
-Telnet (port 23) attracts a distinct attacker population: IoT botnets and legacy system scanners. Many automated botnets (Mirai variants, Mozi derivatives) specifically target Telnet because a large installed base of IoT devices (routers, cameras, DVRs) still run Telnet with default credentials. Telnet data is qualitatively different from SSH data — it tends to be more automated, more botnet-sourced, and involves different credential dictionaries.
+Telnet (port 23) attracts a distinct attacker population: IoT botnets and legacy system scanners. Many automated botnets (Mirai variants, Mozi derivatives) specifically target Telnet because a large installed base of IoT devices (routers, cameras, DVRs) still run Telnet with default credentials. Telnet data is qualitatively different from SSH data, it tends to be more automated, more botnet-sourced, and involves different credential dictionaries.
 
 Running both services simultaneously on one honeypot allows direct comparison of these two attack populations in a shared timeframe.
 
@@ -94,7 +94,7 @@ Web servers are the second-most targeted service class after SSH. Any public IP 
 
 ### Why Default nginx Config
 
-A hardened nginx config with path restrictions would reduce the attack surface and produce less interesting data. The default config accepts all requests and logs them all — exactly what a honeypot needs. The 404 responses to malicious paths are less important than the fact that every probe is logged.
+A hardened nginx config with path restrictions would reduce the attack surface and produce less interesting data. The default config accepts all requests and logs them all, exactly what a honeypot needs. The 404 responses to malicious paths are less important than the fact that every probe is logged.
 
 ---
 
