@@ -367,7 +367,7 @@ Logrotate configured on VPS (`/etc/logrotate.d/cowrie`):
 
 ## Status Check During Data Gathering
 
-Run this cmd in the homeserver to get an snapshot on the data that has been currently collected
+Run this command in the homeserver to get an snapshot on the data that has been currently collected.
 
 ```bash
 # How many events total
