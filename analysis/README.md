@@ -69,7 +69,7 @@ Feeds Cowrie session transcripts to a local Ollama LLM and generates plain-Engli
 # ALIENWARE (PowerShell) — requires Ollama with llama3.1:8b
 # ollama pull llama3.1:8b  (if not already pulled)
 
-cd C:\Users\tycee\cowrie-honeypot-git
+cd C:\Users\tycee\honeypot-deployment-git
 
 python analysis\explain_sessions.py `
   --input data\live\cowrie_enriched.json `
