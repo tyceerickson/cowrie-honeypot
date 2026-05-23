@@ -68,6 +68,8 @@ Internet Attackers (Global)
 └─────────────────────────────────────────┘
 ```
 
+![Architecture Diagram](diagrams/architecture-diagram.png)
+
 ---
 
 ## Honeypot Stack
