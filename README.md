@@ -1,4 +1,4 @@
-# Cowrie Honeypot — Internet-Facing Attack Intelligence Platform
+# Honeypot Deployment — Internet-Facing Attack Intelligence Platform
 
 > **Internet-facing SSH/Telnet/HTTP/SMB honeypot capturing real attacker behavior from global threat actors.**
 > Deployed on DigitalOcean NYC1. Logs forwarded via encrypted WireGuard tunnel to on-premises Ubuntu Server.
