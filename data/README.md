@@ -27,7 +27,7 @@ This directory is the local working copy of the live capture data synced from Ub
 
 ```powershell
 # ALIENWARE (PowerShell) — from project root
-cd C:\Users\tycee\honeypot-deployment-git
+cd C:\Users\tycee\honeypot-deployment
 
 scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json data\live\cowrie_enriched.json
 scp terickson@100.82.166.75:/opt/cowrie-logs/nginx/access.log data\live\nginx_access.log

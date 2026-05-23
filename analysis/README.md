@@ -69,7 +69,7 @@ Feeds Cowrie session transcripts to a local Ollama LLM and generates plain-Engli
 # ALIENWARE (PowerShell) — requires Ollama with llama3.1:8b
 # ollama pull llama3.1:8b  (if not already pulled)
 
-cd C:\Users\tycee\honeypot-deployment-git
+cd C:\Users\tycee\honeypot-deployment
 
 python analysis\explain_sessions.py `
   --input data\live\cowrie_enriched.json `
@@ -121,7 +121,7 @@ After capture ends May 28, 2026:
 
 ```powershell
 # ALIENWARE (PowerShell) — from project root
-cd C:\Users\tycee\honeypot-deployment-git
+cd C:\Users\tycee\honeypot-deployment
 
 # Pull enriched log and nginx log into data\live\
 scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json data\live\cowrie_enriched.json
@@ -145,7 +145,7 @@ python3 /opt/cowrie-tools/analyze_sessions.py \
 
 ```powershell
 # ALIENWARE (PowerShell) — from project root
-cd C:\Users\tycee\honeypot-deployment-git
+cd C:\Users\tycee\honeypot-deployment
 
 python analysis\explain_sessions.py `
   --input data\live\cowrie_enriched.json `
@@ -159,7 +159,7 @@ python analysis\explain_sessions.py `
 
 ```powershell
 # ALIENWARE (PowerShell) — from project root
-cd C:\Users\tycee\honeypot-deployment-git
+cd C:\Users\tycee\honeypot-deployment
 
 # Pull charts and CSVs from Ubuntu Server
 scp -r terickson@100.82.166.75:/opt/cowrie-tools/results/ results\
