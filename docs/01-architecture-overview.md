@@ -90,7 +90,7 @@ INTERNET
          │  TCP 22, 23, 80, 443, 21, 445, 1433, 3306
          ▼
 ┌─────────────────────────────────────────────────────┐
-│  DigitalOcean Cloud Firewall (cowrie-honeypot)      │
+│  DigitalOcean Cloud Firewall (honeypot-deployment)  │
 │                                                     │
 │  INBOUND ALLOW:                                     │
 │  TCP 22    → All IPv4/IPv6  (Cowrie SSH)            │
