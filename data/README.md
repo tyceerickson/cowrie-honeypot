@@ -12,16 +12,17 @@ data/
 ├── live/                            — Live capture data (gitignored, not committed)
 │   ├── cowrie_enriched.json         — Synced from Ubuntu Server for local analysis
 │   ├── nginx_access.log             — Synced nginx web attack log
+│   ├── opensearch_full.json         — Full Wazuh export from OpenSearch (for analyze_opensearch.py)
 │   └── .gitkeep                     — Keeps directory tracked by git
 └── sample/
-    └── cowrie-sample-10events.json  — 10 sanitized real events (one per type)
+    └── cowrie-sample-10events.json  — 10 sanitized real events (one per type, May 21-28, 2026)
 ```
 
 ---
 
 ## `data/live/` — Live Data Landing Zone
 
-This directory is the local working copy of the live capture data synced from Ubuntu Server. It is listed in `.gitignore` so the actual log files are never committed — they are too large (~500MB) and contain real attacker IP addresses.
+This directory is the local working copy of the live capture data synced from Ubuntu Server. It is listed in `.gitignore` so the actual log files are never committed — they are too large (~500MB+).
 
 **Sync from Ubuntu Server (run after capture ends May 28):**
 
@@ -32,6 +33,9 @@ cd C:\Users\tycee\honeypot-deployment
 scp terickson@100.82.166.75:/opt/cowrie-logs/cowrie_enriched.json data\live\cowrie_enriched.json
 scp terickson@100.82.166.75:/opt/cowrie-logs/nginx/access.log data\live\nginx_access.log
 scp terickson@100.82.166.75:/opt/cowrie-logs/dionaea/dionaea.log data\live\dionaea.log
+
+# For full OpenSearch export (11.6M events):
+scp terickson@100.82.166.75:/path/to/opensearch_full.json data\live\opensearch_full.json
 ```
 
 Once synced, run analysis scripts pointing to `data\live\`:
@@ -47,11 +51,11 @@ python analysis\explain_sessions.py `
 
 ## `data/sample/` — Sanitized Sample Data
 
-`sample/cowrie-sample-10events.json` contains 10 representative events from the live capture, sanitized for public distribution. One event per Cowrie event type, plus an SSH key implant command.
+`sample/cowrie-sample-10events.json` contains 10 representative events from the live capture, sanitized for public distribution. One event per major Cowrie event type, plus SSH key implant and malware download examples.
 
 **Sanitization applied:**
 - Source IPs replaced with `198.51.100.x` (RFC 5737 documentation range)
-- All other fields preserved as-is from the live capture
+- All other fields preserved as-is from the live capture (May 21-28, 2026)
 
 **Event types included:**
 
@@ -60,11 +64,12 @@ python analysis\explain_sessions.py `
 | `cowrie.session.connect` | New SSH connection established |
 | `cowrie.client.version` | SSH client version string |
 | `cowrie.client.kex` | SSH HASSH key exchange fingerprint |
-| `cowrie.login.failed` | Failed credential attempt |
+| `cowrie.login.failed` | Failed credential attempt (x2) |
 | `cowrie.login.success` | Accepted credential (honeypot login) |
-| `cowrie.command.input` | Command typed in fake shell |
+| `cowrie.command.input` | System reconnaissance (`uname -a`) |
+| `cowrie.command.input` | SSH key backdoor implant attempt |
+| `cowrie.command.input` | Malware download attempt (`wget`) |
 | `cowrie.session.closed` | Session termination with duration |
-| `cowrie.command.input` | SSH key implant command (bonus event) |
 
 ---
 
@@ -80,6 +85,7 @@ It is not committed to this repository — use `data/live/` as the local working
 | nginx logs | `/opt/cowrie-logs/nginx/access.log` | Web attack requests |
 | Dionaea logs | `/opt/cowrie-logs/dionaea/dionaea.log` | Malware capture events |
 | Wazuh export | `/opt/cowrie-logs/wazuh/wazuh-cowrie.json` | Normalized for SIEM |
+| OpenSearch export | `/var/lib/wazuh/api/files/` | Full Wazuh dataset (11.6M events) |
 
 ---
 
@@ -117,11 +123,15 @@ Every Cowrie event follows this base schema:
 |--------|-------|
 | Capture start | May 21, 2026 18:14 UTC |
 | Capture end | May 28, 2026 18:14 UTC |
-| Total events | TBD |
-| Unique source IPs | TBD |
-| Countries represented | 50+ |
-| Successful logins | TBD |
-| Unique HASSH fingerprints | 19+ |
-| SSH key implant sessions | 236+ |
+| Total events | 11,611,908 |
+| Unique source IPs | 1,321 |
+| Countries represented | 105 |
+| Successful logins | 5,358 |
+| Failed login attempts | 873,373 |
+| Commands executed | 501,689 |
+| Malware download attempts | 165,580 |
+| Web attack requests (nginx) | 6,225 |
+| Unique HASSH fingerprints | 51 |
+| Unique credential pairs | 428,942 |
 
-> First-hour baseline: 1,076 events from 10 countries within 60 minutes of going live.
+> **First-hour baseline:** 1,076 events from 10 countries within 60 minutes of going live.
