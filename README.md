@@ -8,6 +8,8 @@
 
 ## Results (7-Day Capture: May 21–28, 2026)
 
+| Description | Total Alerts |
+|-------------|--------------|
 | Total events captured | 11,611,908 |
 | Unique attacker IPs | 1,321 |
 | Countries represented | 105 |
