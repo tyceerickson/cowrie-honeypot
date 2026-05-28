@@ -139,10 +139,10 @@ Wazuh SIEM ingestion
 | M0 — Repo scaffold + architecture design | ✅ Complete |
 | M1 — VPS deployed, WireGuard tunnel live | ✅ Complete |
 | M2 — Full honeypot stack live (Cowrie/nginx/Dionaea) | ✅ Complete |
-| M3 — 7-day capture complete, data processed | 🔄 In progress (ends May 28) |
-| M4 — Analysis report + MITRE ATT&CK mapping | ⏳ Pending |
-| M5 — Wazuh export pipeline | ⏳ Pending |
-| M6 — Final documentation + README polish | ⏳ Pending |
+| M3 — 7-day capture complete, data processed | ✅ Complete — 11,611,908 events captured |
+| M4 — Analysis report + MITRE ATT&CK mapping | ✅ Complete — full dataset analyzed |
+| M5 — Wazuh export pipeline | ✅ Complete |
+| M6 — Final documentation + README polish | ✅ Complete |
 
 ---
 
@@ -154,8 +154,8 @@ This is Project 3 of a 4-project cybersecurity portfolio:
 |---------|-----------|--------|
 | 1 — Home Lab Infrastructure | [home-lab-infrastructure](https://github.com/tyceerickson/home-lab-infrastructure) | ✅ Complete |
 | 2 — AI Network Traffic Classifier | [ai-traffic-classifier](https://github.com/tyceerickson/ai-traffic-classifier) | ✅ Complete |
-| 3 — Honeypot Deployment & Analysis | **This repository** | 🔄 In progress |
-| 4 — AI-Powered SOC Pipeline | Coming soon | ⏳ Planned |
+| 3 — Honeypot Deployment & Analysis | **This repository** | ✅ Complete |
+| 4 — AI-Powered SOC Pipeline | Coming soon | 🔄 In progress |
 
 The Cowrie session logs, Dionaea malware captures, and nginx web attack logs produced here become the training/test data for the Project 4 Wazuh SIEM and AI-powered SOC dashboard.
 

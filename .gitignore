@@ -53,3 +53,8 @@ credentials.json
 
 # Compiled outputs
 *.pyc
+
+data/live/*.gz
+data/live/*.json
+data/live/*.mmdb
+data/live/*.log
