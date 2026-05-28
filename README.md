@@ -8,18 +8,18 @@
 
 ## Results (7-Day Capture: May 21–28, 2026)
 
-| Metric | Value |
-|--------|-------|
-| Total events captured | In progress |
-| Unique attacker IPs | In progress |
-| Countries represented | 10+ confirmed |
-| Credential attempts | In progress |
-| Successful fake logins | In progress |
-| Commands executed in fake shell | In progress |
-| Malware samples captured (Dionaea) | In progress |
-| Web attack requests (nginx) | In progress |
+| Total events captured | 11,611,908 |
+| Unique attacker IPs | 1,321 |
+| Countries represented | 105 |
+| Credential attempts | 873,373 failed · 5,358 successful |
+| Successful fake logins | 5,358 |
+| Commands executed in fake shell | 501,689 |
+| Malware download attempts | 165,580 |
+| Web attack requests (nginx) | 6,225 |
+| Unique SSH tool fingerprints | 51 |
+| Capture period | May 21–28, 2026 |
 
-> First-hour snapshot: **1,076 events**, **10 countries**, top attacker: Hong Kong (464 events). Honeypot live as of May 21, 2026 18:14 UTC.
+> **Final results: 11,611,908 events · 1,321 unique IPs · 105 countries · 6-day capture.** Honeypot live May 21–28, 2026.
 
 ---
 
