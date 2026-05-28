@@ -27,49 +27,6 @@
 
 ## Architecture
 
-```
-Internet Attackers (Global)
-         │
-         │  TCP 22/23 · TCP 80/443 · TCP 21/445/1433/3306
-         ▼
-┌─────────────────────────────────────────┐
-│     DigitalOcean VPS — NYC1             │
-│     174.138.35.11                       │
-│                                         │
-│  DigitalOcean Cloud Firewall            │
-│  Cowrie SSH/Telnet  (ports 22/23)       │
-│  nginx HTTP/HTTPS   (ports 80/443)      │
-│  Dionaea FTP/SMB/   (ports 21/445/      │
-│         MSSQL/MySQL  1433/3306)         │
-│                                         │
-│  WireGuard Client → 10.10.10.2          │
-│  Real SSH management → port 2222        │
-│  Tailscale: 100.89.15.57               │
-└──────────────┬──────────────────────────┘
-               │ WireGuard encrypted tunnel (UDP)
-               ▼
-┌─────────────────────────────────────────┐
-│     OPNsense Firewall — Home Lab        │
-│     WireGuard Server: 10.10.10.1        │
-│     4 VLANs (10/20/30/40)              │
-└──────────────┬──────────────────────────┘
-               │ VLAN 10 (192.168.10.0/24)
-               ▼
-┌─────────────────────────────────────────┐
-│     Ubuntu Server — 192.168.10.4        │
-│     /opt/cowrie-logs/                   │
-│     GeoIP enrichment (hourly)           │
-│     → Wazuh SIEM (Project 4)           │
-└──────────────┬──────────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────────┐
-│     Alienware m16 R2 — Analysis         │
-│     Python · Ollama llama3.1:8b         │
-│     RTX 4070 · 64GB RAM                 │
-└─────────────────────────────────────────┘
-```
-
 ![Architecture Diagram](diagrams/architecture-diagram.png)
 
 ---
