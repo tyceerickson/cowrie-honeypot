@@ -166,7 +166,7 @@ scp -r terickson@100.82.166.75:/opt/cowrie-tools/results/ results\
 
 # Commit everything
 git add results\
-git commit -m "M4: final analysis — 7-day capture complete"
+git commit -m "M4: final analysis — 6-day capture complete"
 git push origin main
 ```
 
