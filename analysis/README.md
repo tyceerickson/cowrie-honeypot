@@ -183,7 +183,7 @@ Techniques observed and analyzed in this project:
 | Valid Accounts | T1078 | Cowrie login.success |
 | Command and Scripting Interpreter | T1059 | Cowrie command.input |
 | System Information Discovery | T1082 | Post-login uname/cpuinfo commands |
-| SSH Authorized Keys | T1098.004 | SSH key implant campaign (225+ sessions) |
+| SSH Authorized Keys | T1098.004 | SSH key implant campaign (149,348 sessions) |
 | Ingress Tool Transfer | T1105 | wget/curl download attempts |
 | Exploit Public-Facing Application | T1190 | nginx CVE probes |
 | File Permissions Modification | T1222 | chattr -ia .ssh commands |
