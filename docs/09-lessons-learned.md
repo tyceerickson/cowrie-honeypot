@@ -39,7 +39,7 @@ systemctl restart sshd
 **Fix:** Update `docker-compose.yml` volume mount:
 ```yaml
 volumes:
-  - ./cowrie-logs:/cowrie/cowrie-git/var/log/cowrie
+  - ./logs:/cowrie/cowrie-git/var/log/cowrie
 ```
 
 **Lesson:** Always verify Docker volume paths against the actual container filesystem, not just documentation.
