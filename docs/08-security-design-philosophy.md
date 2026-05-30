@@ -44,7 +44,7 @@ WireGuard is stateless, if the network drops and comes back, the tunnel resumes 
 
 **Rationale:** The home WAN IP (`192.168.4.58`) is assigned by the Eero router, which sits upstream of OPNsense. The Eero NATs all traffic, meaning OPNsense's "WAN" is actually a private IP, not routable from the internet. The VPS cannot dial into `192.168.4.58` from the internet because that address doesn't exist on the public internet.
 
-However, OPNsense can reach the VPS's public IP (`174.138.35.11`) outbound without any changes to the Eero, outbound UDP is typically unrestricted. By having the VPS listen and OPNsense dial out, the double-NAT is irrelevant.
+The VPS, however, has a stable public IP (174.138.35.11) and runs as the WireGuard listener. OPNsense dials outbound to it, outbound UDP is unrestricted through the Eero, so the home-side double-NAT is irrelevant and no inbound port-forwarding is required on the Eero.
 
 **Tradeoff acknowledged:** This means OPNsense must have the VPS's endpoint address (`174.138.35.11:51820`) in its peer config. If the VPS IP changes (e.g., after a rebuild), OPNsense must be updated.
 
