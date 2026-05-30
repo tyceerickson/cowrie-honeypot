@@ -92,14 +92,14 @@ routes:
 
 ### Lesson 6 — Dionaea Disk-Full Incident
 
-**What happened:** On May 24–25, 2026, Dionaea's verbose debug logging filled the 25GB VPS disk, causing Cowrie to stop writing logs for approximately 24–48 hours. The dated log files for May 24–25 show 0 bytes in the Cowrie log rotation.
+**What happened:** On May 24–25, 2026, Dionaea's verbose debug logging filled the 25GB VPS disk, causing Cowrie to stop writing logs for approximately 24 hours. The dated log files for May 24–25 show 0 bytes in the Cowrie log rotation.
 
 **Root cause:** Dionaea's default log level is `DEBUG`, which logs every packet parsing operation at the scapy level. One attacker connecting to port 1433 (MSSQL) triggered millions of repeated TDS header parsing messages in a tight loop. The result: 11.4 million log lines (1.5GB) from a single attacker connection, zero meaningful incident data.
 
 **Timeline:**
 - May 24 evening: Dionaea log growth accelerates
 - May 25 00:00: VPS disk reaches 100% capacity
-- May 25 00:00–May 27 00:00: Cowrie cannot write logs, 24+ hours of data lost
+- May 25 00:00–May 26 00:00: Cowrie cannot write logs, 24+ hours of data lost
 - May 26: Disk manually cleared, logging resumed
 
 **Estimated data loss:** 1–2 days of Cowrie SSH logs. The data gap is visible in the OpenSearch index — May 25 shows significantly reduced volume (1,742,714 vs 2.6M+ on surrounding days).
@@ -136,7 +136,7 @@ default = warning
 
 **Root cause:** rsync configured to sync only the active log file, not the entire log directory.
 
-**Impact:** The Ubuntu Server enriched log only contained recent data (whatever was in the current `cowrie.json`), not the full 7-day dataset. The full historical data was on the VPS in rotated files.
+**Impact:** The Ubuntu Server enriched log only contained recent data (whatever was in the current `cowrie.json`), not the full 6-day dataset. The full historical data was on the VPS in rotated files.
 
 **Fix:** Update rsync to include all log files:
 ```bash
@@ -153,7 +153,7 @@ rsync -avz --include="cowrie.json*" --include="*.gz" /opt/cowrie/logs/ ubuntu@ho
 
 **What happened:** We initially tried to analyze data from the flat JSON files synced to Ubuntu Server, but discovered these were partial due to the rsync gap (Lesson 7). The complete dataset was in OpenSearch/Wazuh, which had been ingesting directly from the VPS.
 
-**Key insight:** OpenSearch was the only system with the complete 7-day dataset. The 11,611,908 events in OpenSearch vs ~209,919 events in the flat files reflects the rsync pipeline gap.
+**Key insight:** OpenSearch was the only system with the complete 6-day dataset. The 11,611,908 events in OpenSearch vs ~209,919 events in the flat files reflects the rsync pipeline gap.
 
 **Fix:** Export directly from OpenSearch using the scroll API:
 ```python
