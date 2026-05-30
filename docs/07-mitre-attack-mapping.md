@@ -9,7 +9,7 @@
 
 This document maps observed attacker behaviors to the MITRE ATT&CK Framework. Each technique includes the ATT&CK technique ID, observed behavior, exact log evidence, real event counts, and Wazuh detection opportunity.
 
-The honeypot captures behaviors across four ATT&CK tactics: **Reconnaissance**, **Initial Access**, **Execution**, and **Persistence**. This is expected — a honeypot by definition captures only the earliest phases of an attack chain.
+The honeypot captures behaviors across multiple ATT&CK tactics: **Reconnaissance**, **Initial Access**, **Credential Access**, **Execution**, **Discovery**, **Persistence**, **Defense Evasion**, and **Command & Control**. This is expected — a honeypot by definition captures only the earliest phases of an attack chain.
 
 ---
 
@@ -60,13 +60,13 @@ The honeypot captures behaviors across four ATT&CK tactics: **Reconnaissance**, 
 
 | Username | Password | Attempts |
 |----------|----------|---------|
-| root | 3245gs5662d34 | 161,992 |
+| root | 345gs5662d34 | 161,992 |
 | 345gs5662d34 | 345gs5662d34 | 161,584 |
 | admin | admin | 6,747 |
 | root | admin | 3,655 |
 | root | root | 2,936 |
 
-**Detection opportunity:** Alert on >5 `cowrie.login.failed` events from the same source IP within 60 seconds. The `3245gs5662d34` credential pair is a known botnet signature — block on first attempt.
+**Detection opportunity:** Alert on >5 `cowrie.login.failed` events from the same source IP within 60 seconds. The `345gs5662d34` credential pair is a known botnet signature — block on first attempt.
 
 ---
 
@@ -128,7 +128,7 @@ The honeypot captures behaviors across four ATT&CK tactics: **Reconnaissance**, 
 {
   "eventid": "cowrie.login.success",
   "username": "root",
-  "password": "3245gs5662d34",
+  "password": "345gs5662d34",
   "src_ip": "103.133.160.33",
   "session": "c185b98aafc3",
   "timestamp": "2026-05-22T00:16:15.673366Z"
