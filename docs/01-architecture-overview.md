@@ -204,6 +204,6 @@ INTERNET
 
 **Why WireGuard instead of SSH tunnel:** WireGuard is stateless, survives network interruptions, and is natively supported by OPNsense. The VPS initiates the connection outbound, which means the double-NAT behind the Eero router is irrelevant, no port forwarding required on the home network.
 
-**Why OPNsense initiates vs VPS initiates:** The home WAN IP (192.168.4.58) is behind Eero NAT and not directly routable from the internet. The VPS dials out to OPNsense's real public IP (206.174.162.81), not the other way around.
+**Why the VPS initiates the tunnel:** The IP that OPNsense sees on its WAN (192.168.4.58) is a private address handed out by the upstream Eero router, which double-NATs the connection — so OPNsense is not directly reachable from the internet on a public IP. Rather than depend on inbound reachability at home, the VPS (174.138.35.11) runs as the WireGuard listener and OPNsense dials outbound to it. This makes the home-side double-NAT irrelevant and requires no port-forwarding on the Eero. (The Eero's own external/public address is 206.174.162.81; see docs/08 Decision 3 for the full explanation of these two layers.)
 
 **Why three honeypot services:** Each service captures a fundamentally different attacker profile and data type. Cowrie produces behavioral session data (commands, credentials). nginx produces web attack signatures (CVEs, scanners). Dionaea produces binary artifacts (actual malware). The combination produces three distinct MITRE ATT&CK phase datasets from one deployment.
