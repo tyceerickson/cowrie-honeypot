@@ -92,17 +92,17 @@ routes:
 
 ### Lesson 6 — Dionaea Disk-Full Incident
 
-**What happened:** On May 25–26, 2026, Dionaea's verbose debug logging filled the 25GB VPS disk, causing Cowrie to stop writing logs for approximately 24–48 hours. The dated log files for May 26–27 show 0 bytes in the Cowrie log rotation.
+**What happened:** On May 24–25, 2026, Dionaea's verbose debug logging filled the 25GB VPS disk, causing Cowrie to stop writing logs for approximately 24–48 hours. The dated log files for May 24–25 show 0 bytes in the Cowrie log rotation.
 
 **Root cause:** Dionaea's default log level is `DEBUG`, which logs every packet parsing operation at the scapy level. One attacker connecting to port 1433 (MSSQL) triggered millions of repeated TDS header parsing messages in a tight loop. The result: 11.4 million log lines (1.5GB) from a single attacker connection, zero meaningful incident data.
 
 **Timeline:**
-- May 25 evening: Dionaea log growth accelerates
-- May 26 00:00: VPS disk reaches 100% capacity
-- May 26 00:00–May 27 00:00: Cowrie cannot write logs, 24+ hours of data lost
-- May 27: Disk manually cleared, logging resumed
+- May 24 evening: Dionaea log growth accelerates
+- May 25 00:00: VPS disk reaches 100% capacity
+- May 25 00:00–May 27 00:00: Cowrie cannot write logs, 24+ hours of data lost
+- May 26: Disk manually cleared, logging resumed
 
-**Estimated data loss:** 1–2 days of Cowrie SSH logs. The data gap is visible in the OpenSearch index — May 26 shows significantly reduced volume (1,742,714 vs 2.6M+ on surrounding days).
+**Estimated data loss:** 1–2 days of Cowrie SSH logs. The data gap is visible in the OpenSearch index — May 25 shows significantly reduced volume (1,742,714 vs 2.6M+ on surrounding days).
 
 **Fix:**
 1. Add Dionaea log level configuration:
@@ -191,7 +191,7 @@ curl -k -u admin:password "https://localhost:9200/wazuh-alerts-4.x-*/_search?scr
 
 1. **Speed of discovery:** The honeypot received its first credential attempt within 90 seconds of going live. This was faster than expected — Shodan/Censys indexing typically takes hours, suggesting some scanning infrastructure continuously monitors new IP assignments in real time.
 
-2. **Campaign concentration:** We expected diverse attack traffic. Instead, a single botnet campaign (`3245gs5662d34` credentials + `mdrfckr` RSA key) accounted for 37% of all credential traffic and 30% of all post-login commands. Internet-wide attacks are far more coordinated than expected.
+2. **Campaign concentration:** We expected diverse attack traffic. Instead, a single botnet campaign (`345gs5662d34` credentials + `mdrfckr` RSA key) accounted for 37% of all credential traffic and 30% of all post-login commands. Internet-wide attacks are far more coordinated than expected.
 
 3. **Tool concentration:** Two tool families (Paramiko 2.x and a Go SSH scanner) accounted for 1.18 million sessions — 45% of all traffic. Internet-wide SSH scanning is dominated by a surprisingly small ecosystem of automated tools.
 
